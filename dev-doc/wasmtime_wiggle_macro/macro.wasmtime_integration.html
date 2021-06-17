@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Define the structs required to integrate a Wiggle implementation with Wasmtime."><meta name="keywords" content="rust, rustlang, rust-lang, wasmtime_integration"><title>wasmtime_integration in wasmtime_wiggle_macro - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../ayu.css" disabled ><script id="default-settings"></script><script src="../storage.js"></script><script src="../crates.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../wasmtime_wiggle_macro/index.html'><div class='logo-container rust-logo'><img src='../rust-logo.png' alt='logo'></div></a><div class="sidebar-elems"><p class="location"><a href="index.html">wasmtime_wiggle_macro</a></p><div id="sidebar-vars" data-name="wasmtime_integration" data-ty="macro" data-relpath=""></div><script defer src="sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class="fqn"><span class="in-band">Macro <a href="index.html">wasmtime_wiggle_macro</a>::<wbr><a class="macro" href="">wasmtime_integration</a><button id="copy-path" onclick="copy_path(this)">⎘</button></span><span class="out-of-band"><span id="render-detail"><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span><a class="srclink" href="../src/wasmtime_wiggle_macro/lib.rs.html#46-58" title="goto source code">[src]</a></span></h1><pre class="rust macro">wasmtime_integration!() { /* proc-macro */ }</pre><div class="docblock"><p>Define the structs required to integrate a Wiggle implementation with Wasmtime.</p>
+<h2 id="arguments" class="section-header"><a href="#arguments">Arguments</a></h2>
+<p>Arguments are provided using struct syntax e.g. <code>{ arg_name: value }</code>.</p>
+<ul>
+<li><code>target</code>: The path of the module where the Wiggle implementation is defined.</li>
+<li><code>witx</code> or <code>witx_literal</code>: the .witx document where the interface is defined.
+<code>witx</code> takes a list of filesystem paths, e.g. <code>[&quot;/path/to/file1.witx&quot;, &quot;./path/to_file2.witx&quot;]</code>. Relative paths are relative to the root of the crate
+where the macro is invoked. <code>witx_literal</code> takes a string of the witx document, e.g.
+<code>&quot;(typename $foo u8)&quot;</code>.</li>
+<li><code>ctx</code>: The context struct used for the Wiggle implementation. This must be the same
+type as the <code>wasmtime_wiggle::from_witx</code> macro at <code>target</code> was invoked with. However, it
+must be imported to the current scope so that it is a bare identifier e.g. <code>CtxType</code>, not
+<code>path::to::CtxType</code>.</li>
+<li><code>modules</code>: Describes how any modules in the witx document will be implemented as Wasmtime
+instances. <code>modules</code> takes a map from the witx module name to a configuration struct, e.g.
+<code>foo =&gt; { name: Foo }, bar =&gt; { name: Bar }</code> will generate integrations for the modules
+named <code>foo</code> and <code>bar</code> in the witx document, as <code>pub struct Foo</code> and <code>pub struct Bar</code>
+respectively.
+The module configuration uses struct syntax with the following fields:
+<ul>
+<li><code>name</code>: required, gives the name of the struct which encapsulates the instance for
+Wasmtime.</li>
+<li><code>docs</code>: optional, a doc string that will be used for the definition of the struct.</li>
+<li><code>function_override</code>: A map of witx function names to Rust function symbols for
+functions that should not call the Wiggle-generated functions, but instead use
+a separate implementation. This is typically used for functions that need to interact
+with Wasmtime in a manner that Wiggle does not permit, e.g. wasi’s <code>proc_exit</code> function
+needs to return a Trap directly to the runtime.
+Example:
+<code>modules: { some_module =&gt; { name: SomeTypeName, docs: &quot;Doc string for definition of SomeTypeName here&quot;, function_override: { foo =&gt; my_own_foo } }</code>.</li>
+</ul>
+</li>
+</ul>
+</div></section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="wasmtime_wiggle_macro" data-search-index-js="../search-index.js" data-search-js="../search.js"></div>
+    <script src="../main.js"></script></body></html>

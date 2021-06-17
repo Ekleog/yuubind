@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["UTIME_NOW",""],["UTIME_OMIT",""]],"enum":[["ClockId","`clockid_t`"]],"fn":[["clock_getres","`clock_getres(id)`"],["clock_gettime","`clock_gettime(id)`"]],"struct":[["timespec",""]]});

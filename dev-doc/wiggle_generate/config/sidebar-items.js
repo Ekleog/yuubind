@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ConfigField",""],["WitxConf","The witx document(s) that will be loaded from a `Config`."]],"struct":[["Config",""],["CtxConf",""],["ErrorConf","Map from abi error type to rich error type"],["ErrorConfField",""],["Literal","A single witx document, provided as a string literal."],["Paths","A collection of paths, pointing to witx documents."]]});

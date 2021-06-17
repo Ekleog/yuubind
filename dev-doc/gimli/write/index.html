@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Write DWARF debugging information."><meta name="keywords" content="rust, rustlang, rust-lang, write"><title>gimli::write - Rust</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../gimli/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a><p class="location">Module write</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class="location"><a href="../index.html">gimli</a></p><div id="sidebar-vars" data-name="write" data-ty="mod" data-relpath="../"></div><script defer src="../sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class="fqn"><span class="in-band">Module <a href="../index.html">gimli</a>::<wbr><a class="mod" href="">write</a><button id="copy-path" onclick="copy_path(this)">⎘</button></span><span class="out-of-band"><span id="render-detail"><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span><a class="srclink" href="../../src/gimli/write/mod.rs.html#1-425" title="goto source code">[src]</a></span></h1><div class="docblock"><p>Write DWARF debugging information.</p>
+<h2 id="api-structure" class="section-header"><a href="#api-structure">API Structure</a></h2>
+<p>This module works by building up a representation of the debugging information
+in memory, and then writing it all at once. It supports two major use cases:</p>
+<ul>
+<li>
+<p>Use the <a href="./struct.DwarfUnit.html"><code>DwarfUnit</code></a> type when writing DWARF
+for a single compilation unit.</p>
+</li>
+<li>
+<p>Use the <a href="./struct.Dwarf.html"><code>Dwarf</code></a> type when writing DWARF for multiple
+compilation units.</p>
+</li>
+</ul>
+<p>The module also supports reading in DWARF debugging information and writing it out
+again, possibly after modifying it. Create a <a href="../read/struct.Dwarf.html"><code>read::Dwarf</code></a>
+instance, and then use <a href="./struct.Dwarf.html#method.from"><code>Dwarf::from</code></a> to convert
+it to a writable instance.</p>
+<h2 id="example-usage" class="section-header"><a href="#example-usage">Example Usage</a></h2>
+<p>Write a compilation unit containing only the top level DIE.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">gimli::write</span>::{
+    <span class="ident">Address</span>, <span class="ident">AttributeValue</span>, <span class="ident">DwarfUnit</span>, <span class="ident">EndianVec</span>, <span class="ident">Error</span>, <span class="ident">Range</span>, <span class="ident">RangeList</span>, <span class="ident">Sections</span>,
+};
+
+<span class="kw">fn</span> <span class="ident">example</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="comment">// Choose the encoding parameters.</span>
+    <span class="kw">let</span> <span class="ident">encoding</span> <span class="op">=</span> <span class="ident">gimli::Encoding</span> {
+        <span class="ident">format</span>: <span class="ident">gimli::Format::Dwarf32</span>,
+        <span class="ident">version</span>: <span class="number">5</span>,
+        <span class="ident">address_size</span>: <span class="number">8</span>,
+    };
+    <span class="comment">// Create a container for a single compilation unit.</span>
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">dwarf</span> <span class="op">=</span> <span class="ident">DwarfUnit::new</span>(<span class="ident">encoding</span>);
+    <span class="comment">// Set a range attribute on the root DIE.</span>
+    <span class="kw">let</span> <span class="ident">range_list</span> <span class="op">=</span> <span class="ident">RangeList</span>(<span class="macro">vec!</span>[<span class="ident">Range::StartLength</span> {
+        <span class="ident">begin</span>: <span class="ident">Address::Constant</span>(<span class="number">0x100</span>),
+        <span class="ident">length</span>: <span class="number">42</span>,
+    }]);
+    <span class="kw">let</span> <span class="ident">range_list_id</span> <span class="op">=</span> <span class="ident">dwarf</span>.<span class="ident">unit</span>.<span class="ident">ranges</span>.<span class="ident">add</span>(<span class="ident">range_list</span>);
+    <span class="kw">let</span> <span class="ident">root</span> <span class="op">=</span> <span class="ident">dwarf</span>.<span class="ident">unit</span>.<span class="ident">root</span>();
+    <span class="ident">dwarf</span>.<span class="ident">unit</span>.<span class="ident">get_mut</span>(<span class="ident">root</span>).<span class="ident">set</span>(
+        <span class="ident">gimli::DW_AT_ranges</span>,
+        <span class="ident">AttributeValue::RangeListRef</span>(<span class="ident">range_list_id</span>),
+    );
+    <span class="comment">// Create a `Vec` for each DWARF section.</span>
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sections</span> <span class="op">=</span> <span class="ident">Sections::new</span>(<span class="ident">EndianVec::new</span>(<span class="ident">gimli::LittleEndian</span>));
+    <span class="comment">// Finally, write the DWARF data to the sections.</span>
+    <span class="ident">dwarf</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">sections</span>)<span class="question-mark">?</span>;
+    <span class="ident">sections</span>.<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">id</span>, <span class="ident">data</span><span class="op">|</span> {
+        <span class="comment">// Here you can add the data to the output object file.</span>
+        <span class="prelude-val">Ok</span>(())
+    })
+}</pre></div>
+</div><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2>
+<table><tr class="module-item"><td><a class="struct" href="struct.Attribute.html" title="gimli::write::Attribute struct">Attribute</a></td><td class="docblock-short"><p>An attribute in a <code>DebuggingInformationEntry</code>, consisting of a name and
+associated value.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.CieId.html" title="gimli::write::CieId struct">CieId</a></td><td class="docblock-short"><p>An identifier for a CIE in a <code>FrameTable</code>.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.CommonInformationEntry.html" title="gimli::write::CommonInformationEntry struct">CommonInformationEntry</a></td><td class="docblock-short"><p>A common information entry. This contains information that is shared between FDEs.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugAbbrev.html" title="gimli::write::DebugAbbrev struct">DebugAbbrev</a></td><td class="docblock-short"><p>A writable <code>.debug_abbrev</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugFrame.html" title="gimli::write::DebugFrame struct">DebugFrame</a></td><td class="docblock-short"><p>A writable <code>.debug_frame</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugInfo.html" title="gimli::write::DebugInfo struct">DebugInfo</a></td><td class="docblock-short"><p>A writable <code>.debug_info</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugInfoOffsets.html" title="gimli::write::DebugInfoOffsets struct">DebugInfoOffsets</a></td><td class="docblock-short"><p>The section offsets of all elements within a <code>.debug_info</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugLine.html" title="gimli::write::DebugLine struct">DebugLine</a></td><td class="docblock-short"><p>A writable <code>.debug_line</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugLineStr.html" title="gimli::write::DebugLineStr struct">DebugLineStr</a></td><td class="docblock-short"><p>A writable <code>.debug_line_str</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugLineStrOffsets.html" title="gimli::write::DebugLineStrOffsets struct">DebugLineStrOffsets</a></td><td class="docblock-short"><p>The section offsets of all strings within a <code>.debug_line_str</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugLoc.html" title="gimli::write::DebugLoc struct">DebugLoc</a></td><td class="docblock-short"><p>A writable <code>.debug_loc</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugLocLists.html" title="gimli::write::DebugLocLists struct">DebugLocLists</a></td><td class="docblock-short"><p>A writable <code>.debug_loclists</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugRanges.html" title="gimli::write::DebugRanges struct">DebugRanges</a></td><td class="docblock-short"><p>A writable <code>.debug_ranges</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugRngLists.html" title="gimli::write::DebugRngLists struct">DebugRngLists</a></td><td class="docblock-short"><p>A writable <code>.debug_rnglists</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugStr.html" title="gimli::write::DebugStr struct">DebugStr</a></td><td class="docblock-short"><p>A writable <code>.debug_str</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebugStrOffsets.html" title="gimli::write::DebugStrOffsets struct">DebugStrOffsets</a></td><td class="docblock-short"><p>The section offsets of all strings within a <code>.debug_str</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DebuggingInformationEntry.html" title="gimli::write::DebuggingInformationEntry struct">DebuggingInformationEntry</a></td><td class="docblock-short"><p>A Debugging Information Entry (DIE).</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DirectoryId.html" title="gimli::write::DirectoryId struct">DirectoryId</a></td><td class="docblock-short"><p>An identifier for a directory in a <code>LineProgram</code>.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.Dwarf.html" title="gimli::write::Dwarf struct">Dwarf</a></td><td class="docblock-short"><p>Writable DWARF information for more than one unit.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.DwarfUnit.html" title="gimli::write::DwarfUnit struct">DwarfUnit</a></td><td class="docblock-short"><p>Writable DWARF information for a single unit.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.EhFrame.html" title="gimli::write::EhFrame struct">EhFrame</a></td><td class="docblock-short"><p>A writable <code>.eh_frame</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.EndianVec.html" title="gimli::write::EndianVec struct">EndianVec</a></td><td class="docblock-short"><p>A <code>Vec&lt;u8&gt;</code> with endianity metadata.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.Expression.html" title="gimli::write::Expression struct">Expression</a></td><td class="docblock-short"><p>The bytecode for a DWARF expression or location description.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.FileId.html" title="gimli::write::FileId struct">FileId</a></td><td class="docblock-short"><p>An identifier for a file in a <code>LineProgram</code>.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.FileInfo.html" title="gimli::write::FileInfo struct">FileInfo</a></td><td class="docblock-short"><p>Extra information for file in a <code>LineProgram</code>.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.FrameDescriptionEntry.html" title="gimli::write::FrameDescriptionEntry struct">FrameDescriptionEntry</a></td><td class="docblock-short"><p>A frame description entry. There should be one FDE per function.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.FrameTable.html" title="gimli::write::FrameTable struct">FrameTable</a></td><td class="docblock-short"><p>A table of frame description entries.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.InitialLengthOffset.html" title="gimli::write::InitialLengthOffset struct">InitialLengthOffset</a></td><td class="docblock-short"><p>The offset at which an initial length should be written.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.LineProgram.html" title="gimli::write::LineProgram struct">LineProgram</a></td><td class="docblock-short"><p>A line number program.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.LineRow.html" title="gimli::write::LineRow struct">LineRow</a></td><td class="docblock-short"><p>A row in the line number table that corresponds to a machine instruction.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.LineStringId.html" title="gimli::write::LineStringId struct">LineStringId</a></td><td class="docblock-short"><p>An identifier for a string in a <code>LineStringTable</code>.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.LineStringTable.html" title="gimli::write::LineStringTable struct">LineStringTable</a></td><td class="docblock-short"><p>A table of strings that will be stored in a <code>.debug_line_str</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.LocationList.html" title="gimli::write::LocationList struct">LocationList</a></td><td class="docblock-short"><p>A locations list that will be stored in a <code>.debug_loc</code> or <code>.debug_loclists</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.LocationListId.html" title="gimli::write::LocationListId struct">LocationListId</a></td><td class="docblock-short"><p>An identifier for a location list in a <code>LocationListTable</code>.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.LocationListOffsets.html" title="gimli::write::LocationListOffsets struct">LocationListOffsets</a></td><td class="docblock-short"><p>The section offsets of a series of location lists within the <code>.debug_loc</code> or <code>.debug_loclists</code> sections.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.LocationListTable.html" title="gimli::write::LocationListTable struct">LocationListTable</a></td><td class="docblock-short"><p>A table of location lists that will be stored in a <code>.debug_loc</code> or <code>.debug_loclists</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.RangeList.html" title="gimli::write::RangeList struct">RangeList</a></td><td class="docblock-short"><p>A range list that will be stored in a <code>.debug_ranges</code> or <code>.debug_rnglists</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.RangeListId.html" title="gimli::write::RangeListId struct">RangeListId</a></td><td class="docblock-short"><p>An identifier for a range list in a <code>RangeListTable</code>.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.RangeListOffsets.html" title="gimli::write::RangeListOffsets struct">RangeListOffsets</a></td><td class="docblock-short"><p>The section offsets of a series of range lists within the <code>.debug_ranges</code> or <code>.debug_rnglists</code> sections.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.RangeListTable.html" title="gimli::write::RangeListTable struct">RangeListTable</a></td><td class="docblock-short"><p>A table of range lists that will be stored in a <code>.debug_ranges</code> or <code>.debug_rnglists</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.Sections.html" title="gimli::write::Sections struct">Sections</a></td><td class="docblock-short"><p>All of the writable DWARF sections.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.StringId.html" title="gimli::write::StringId struct">StringId</a></td><td class="docblock-short"><p>An identifier for a string in a <code>StringTable</code>.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.StringTable.html" title="gimli::write::StringTable struct">StringTable</a></td><td class="docblock-short"><p>A table of strings that will be stored in a <code>.debug_str</code> section.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.Unit.html" title="gimli::write::Unit struct">Unit</a></td><td class="docblock-short"><p>A unit’s debugging information.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.UnitEntryId.html" title="gimli::write::UnitEntryId struct">UnitEntryId</a></td><td class="docblock-short"><p>An identifier for an entry in a <code>Unit</code>.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.UnitId.html" title="gimli::write::UnitId struct">UnitId</a></td><td class="docblock-short"><p>An identifier for a unit in a <code>UnitTable</code>.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.UnitTable.html" title="gimli::write::UnitTable struct">UnitTable</a></td><td class="docblock-short"><p>A table of units that will be stored in the <code>.debug_info</code> section.</p>
+</td></tr></table><h2 id="enums" class="section-header"><a href="#enums">Enums</a></h2>
+<table><tr class="module-item"><td><a class="enum" href="enum.Address.html" title="gimli::write::Address enum">Address</a></td><td class="docblock-short"><p>An address.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.AttributeValue.html" title="gimli::write::AttributeValue enum">AttributeValue</a></td><td class="docblock-short"><p>The value of an attribute in a <code>DebuggingInformationEntry</code>.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.CallFrameInstruction.html" title="gimli::write::CallFrameInstruction enum">CallFrameInstruction</a></td><td class="docblock-short"><p>An instruction in a frame description entry.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.ConvertError.html" title="gimli::write::ConvertError enum">ConvertError</a></td><td class="docblock-short"><p>An error that occurred when converting a read value into a write value.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.Error.html" title="gimli::write::Error enum">Error</a></td><td class="docblock-short"><p>An error that occurred when writing.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.LineString.html" title="gimli::write::LineString enum">LineString</a></td><td class="docblock-short"><p>A string value for use in defining paths in line number programs.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.Location.html" title="gimli::write::Location enum">Location</a></td><td class="docblock-short"><p>A single location.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.Range.html" title="gimli::write::Range enum">Range</a></td><td class="docblock-short"><p>A single range.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.Reference.html" title="gimli::write::Reference enum">Reference</a></td><td class="docblock-short"><p>A reference to a <code>.debug_info</code> entry.</p>
+</td></tr></table><h2 id="traits" class="section-header"><a href="#traits">Traits</a></h2>
+<table><tr class="module-item"><td><a class="trait" href="trait.Section.html" title="gimli::write::Section trait">Section</a></td><td class="docblock-short"><p>Functionality common to all writable DWARF sections.</p>
+</td></tr><tr class="module-item"><td><a class="trait" href="trait.Writer.html" title="gimli::write::Writer trait">Writer</a></td><td class="docblock-short"><p>A trait for writing the data to a DWARF section.</p>
+</td></tr></table><h2 id="types" class="section-header"><a href="#types">Type Definitions</a></h2>
+<table><tr class="module-item"><td><a class="type" href="type.ConvertResult.html" title="gimli::write::ConvertResult type">ConvertResult</a></td><td class="docblock-short"><p>The result of a conversion.</p>
+</td></tr><tr class="module-item"><td><a class="type" href="type.Result.html" title="gimli::write::Result type">Result</a></td><td class="docblock-short"><p>The result of a write.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="gimli" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
+    <script src="../../main.js"></script></body></html>

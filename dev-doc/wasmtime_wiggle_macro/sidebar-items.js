@@ -1,0 +1,1 @@
+initSidebarItems({"macro":[["wasmtime_integration","Define the structs required to integrate a Wiggle implementation with Wasmtime."]]});

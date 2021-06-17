@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="A capability-oriented API modeled after `std`."><meta name="keywords" content="rust, rustlang, rust-lang, cap_std"><title>cap_std - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../ayu.css" disabled ><script id="default-settings"></script><script src="../storage.js"></script><script src="../crates.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="https://raw.githubusercontent.com/bytecodealliance/cap-std/main/media/cap-std.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../cap_std/index.html'><div class='logo-container'><img src='https://raw.githubusercontent.com/bytecodealliance/cap-std/main/media/cap-std.svg' alt='logo'></div></a><p class="location">Crate cap_std</p><div class="block version"><p>Version 0.13.7</p></div><div class="sidebar-elems"><a id="all-types" href="all.html"><p>See all cap_std's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li></ul></div><p class="location"></p><div id="sidebar-vars" data-name="cap_std" data-ty="mod" data-relpath="../"></div></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class="fqn"><span class="in-band">Crate <a class="mod" href="">cap_std</a><button id="copy-path" onclick="copy_path(this)">⎘</button></span><span class="out-of-band"><span id="render-detail"><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span><a class="srclink" href="../src/cap_std/lib.rs.html#1-48" title="goto source code">[src]</a></span></h1><div class="docblock"><p>A capability-oriented API modeled after <code>std</code>.</p>
+<p>This corresponds to <a href="https://doc.rust-lang.org/nightly/std/index.html" title="std"><code>std</code></a>.</p>
+<p>Capability-oriented APIs represent access to external resources as
+objects which can be passed around between different parts of a
+program.</p>
+<p>Two notable features are the <a href="fs/struct.Dir.html"><code>Dir</code></a> and <a href="net/struct.Catalog.html"><code>Catalog</code></a> types:</p>
+<ul>
+<li><code>Dir</code> represents an open directory in a filesystem. Instead of
+opening files by absolute paths or paths relative to the current
+working directory, files are opened via paths relative to a
+<code>Dir</code>. The concepts of a process-wide “current working directory”
+and a single global filesystem namespace are de-emphasized.</li>
+<li><code>Catalog</code> represents a set of network addresses. Instead of
+allowing applications to request access to any address and then
+applying process-wide filtering rules, filtering rules are
+built into catalogs which may be passed through the program.</li>
+</ul>
+<p>On WASI, use of this library closely reflects the underlying system
+API, so it avoids compatibility layers.</p>
+</div><h2 id="modules" class="section-header"><a href="#modules">Modules</a></h2>
+<table><tr class="module-item"><td><a class="mod" href="fs/index.html" title="cap_std::fs mod">fs</a></td><td class="docblock-short"><p>A capability-oriented filesystem API modeled after <code>std::fs</code>.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="net/index.html" title="cap_std::net mod">net</a></td><td class="docblock-short"><p>A capability-oriented network API modeled after <code>std::net</code>.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="os/index.html" title="cap_std::os mod">os</a></td><td class="docblock-short"><p>OS-specific functionality.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="path/index.html" title="cap_std::path mod">path</a></td><td class="docblock-short"><p>Cross-platform path manipulation.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="time/index.html" title="cap_std::time mod">time</a></td><td class="docblock-short"><p>A capability-oriented clock API modeled after <code>std::time</code>.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="cap_std" data-search-index-js="../search-index.js" data-search-js="../search.js"></div>
+    <script src="../main.js"></script></body></html>

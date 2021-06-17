@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Task related testing utilities."><meta name="keywords" content="rust, rustlang, rust-lang, task"><title>futures_test::task - Rust</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../futures_test/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a><p class="location">Module task</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#functions">Functions</a></li></ul></div><p class="location"><a href="../index.html">futures_test</a></p><div id="sidebar-vars" data-name="task" data-ty="mod" data-relpath="../"></div><script defer src="../sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class="fqn"><span class="in-band">Module <a href="../index.html">futures_test</a>::<wbr><a class="mod" href="">task</a><button id="copy-path" onclick="copy_path(this)">⎘</button></span><span class="out-of-band"><span id="render-detail"><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span><a class="srclink" href="../../src/futures_test/task/mod.rs.html#10-60" title="goto source code">[src]</a></span></h1><div class="docblock"><p>Task related testing utilities.</p>
+<p>This module provides utilities for creating test
+<a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Context.html"><code>Context</code></a>s,
+<a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html"><code>Waker</code></a>s and
+<a href="../../futures_task/spawn/trait.Spawn.html"><code>Spawn</code></a> implementations.</p>
+<p>Test contexts:</p>
+<ul>
+<li><a href="fn.noop_context.html"><code>noop_context</code></a> creates a context that ignores calls to
+<a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html"><code>cx.waker().wake_by_ref()</code></a>.</li>
+<li><a href="fn.panic_context.html"><code>panic_context</code></a> creates a context that panics when
+<a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html"><code>cx.waker().wake_by_ref()</code></a> is called.</li>
+</ul>
+<p>Test wakers:</p>
+<ul>
+<li><a href="fn.noop_waker.html"><code>noop_waker</code></a> creates a waker that ignores calls to
+<a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html"><code>wake</code></a>.</li>
+<li><a href="fn.panic_waker.html"><code>panic_waker</code></a> creates a waker that panics when
+<a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html"><code>wake</code></a> is called.</li>
+<li><a href="fn.new_count_waker.html"><code>new_count_waker</code></a> creates a waker that increments a counter whenever
+<a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html"><code>wake</code></a> is called.</li>
+</ul>
+<p>Test spawners:</p>
+<ul>
+<li><a href="struct.NoopSpawner.html"><code>NoopSpawner</code></a> ignores calls to
+<a href="futures_util::task::SpawnExt::spawn"><code>spawn</code></a></li>
+<li><a href="struct.PanicSpawner.html"><code>PanicSpawner</code></a> panics if <a href="futures_util::task::SpawnExt::spawn"><code>spawn</code></a> is
+called.</li>
+<li><a href="struct.RecordSpawner.html"><code>RecordSpawner</code></a> records the spawned futures.</li>
+</ul>
+<p>For convenience there additionally exist various functions that directly
+return waker/spawner references: <a href="fn.noop_waker_ref.html"><code>noop_waker_ref</code></a>,
+<a href="fn.panic_waker_ref.html"><code>panic_waker_ref</code></a>, <a href="fn.noop_spawner_mut.html"><code>noop_spawner_mut</code></a> and <a href="fn.panic_spawner_mut.html"><code>panic_spawner_mut</code></a>.</p>
+</div><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2>
+<table><tr class="module-item"><td><a class="struct" href="struct.AwokenCount.html" title="futures_test::task::AwokenCount struct">AwokenCount</a></td><td class="docblock-short"><p>Number of times the waker was awoken.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.NoopSpawner.html" title="futures_test::task::NoopSpawner struct">NoopSpawner</a></td><td class="docblock-short"><p>An implementation of <a href="../../futures_task/spawn/trait.Spawn.html"><code>Spawn</code></a> that
+discards spawned futures when used.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.PanicSpawner.html" title="futures_test::task::PanicSpawner struct">PanicSpawner</a></td><td class="docblock-short"><p>An implementation of <a href="../../futures_task/spawn/trait.Spawn.html"><code>Spawn</code></a> that panics
+when used.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.RecordSpawner.html" title="futures_test::task::RecordSpawner struct">RecordSpawner</a></td><td class="docblock-short"><p>An implementation of <a href="../../futures_task/spawn/trait.Spawn.html"><code>Spawn</code></a> that records
+any <a href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html"><code>Future</code></a>s spawned on it.</p>
+</td></tr></table><h2 id="functions" class="section-header"><a href="#functions">Functions</a></h2>
+<table><tr class="module-item"><td><a class="fn" href="fn.new_count_waker.html" title="futures_test::task::new_count_waker fn">new_count_waker</a></td><td class="docblock-short"><p>Create a new <a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html"><code>Waker</code></a> that counts the number of times it’s awoken.</p>
+</td></tr><tr class="module-item"><td><a class="fn" href="fn.noop_context.html" title="futures_test::task::noop_context fn">noop_context</a></td><td class="docblock-short"><p>Create a new <a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Context.html"><code>Context</code></a> where the
+<a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Context.html#method.waker">waker</a> will ignore any uses.</p>
+</td></tr><tr class="module-item"><td><a class="fn" href="fn.noop_spawner_mut.html" title="futures_test::task::noop_spawner_mut fn">noop_spawner_mut</a></td><td class="docblock-short"><p>Get a reference to a singleton instance of <a href="struct.NoopSpawner.html" title="NoopSpawner"><code>NoopSpawner</code></a>.</p>
+</td></tr><tr class="module-item"><td><a class="fn" href="fn.noop_waker.html" title="futures_test::task::noop_waker fn">noop_waker</a></td><td class="docblock-short"><p>Create a new <a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html" title="Waker"><code>Waker</code></a> which does
+nothing when <code>wake()</code> is called on it.</p>
+</td></tr><tr class="module-item"><td><a class="fn" href="fn.noop_waker_ref.html" title="futures_test::task::noop_waker_ref fn">noop_waker_ref</a></td><td class="docblock-short"><p>Get a static reference to a <a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html" title="Waker"><code>Waker</code></a> which
+does nothing when <code>wake()</code> is called on it.</p>
+</td></tr><tr class="module-item"><td><a class="fn" href="fn.panic_context.html" title="futures_test::task::panic_context fn">panic_context</a></td><td class="docblock-short"><p>Create a new <a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Context.html"><code>Context</code></a> where the
+<a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Context.html#method.waker">waker</a> will panic if used.</p>
+</td></tr><tr class="module-item"><td><a class="fn" href="fn.panic_spawner_mut.html" title="futures_test::task::panic_spawner_mut fn">panic_spawner_mut</a></td><td class="docblock-short"><p>Get a reference to a singleton instance of <a href="struct.PanicSpawner.html" title="PanicSpawner"><code>PanicSpawner</code></a>.</p>
+</td></tr><tr class="module-item"><td><a class="fn" href="fn.panic_waker.html" title="futures_test::task::panic_waker fn">panic_waker</a></td><td class="docblock-short"><p>Create a new <a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html"><code>Waker</code></a> which will
+panic when <code>wake()</code> is called on it. The <a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html" title="Waker"><code>Waker</code></a> can be converted
+into a <a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html" title="Waker"><code>Waker</code></a> which will behave the same way.</p>
+</td></tr><tr class="module-item"><td><a class="fn" href="fn.panic_waker_ref.html" title="futures_test::task::panic_waker_ref fn">panic_waker_ref</a></td><td class="docblock-short"><p>Get a global reference to a
+<a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html"><code>Waker</code></a> referencing a singleton
+instance of a <a href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Waker.html" title="Waker"><code>Waker</code></a> which panics when woken.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="futures_test" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
+    <script src="../../main.js"></script></body></html>

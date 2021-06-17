@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["wasmtime_wiggle"] = [{"text":"impl <a class=\"trait\" href=\"wasmtime_wiggle/trait.GuestMemory.html\" title=\"trait wasmtime_wiggle::GuestMemory\">GuestMemory</a> for <a class=\"struct\" href=\"wasmtime_wiggle/struct.WasmtimeGuestMemory.html\" title=\"struct wasmtime_wiggle::WasmtimeGuestMemory\">WasmtimeGuestMemory</a>","synthetic":false,"types":["wasmtime_wiggle::WasmtimeGuestMemory"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

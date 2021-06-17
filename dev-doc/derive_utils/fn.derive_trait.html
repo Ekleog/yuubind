@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="A function for creating `proc_macro_derive` like deriving trait to enum so long as all variants are implemented that trait."><meta name="keywords" content="rust, rustlang, rust-lang, derive_trait"><title>derive_trait in derive_utils - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../ayu.css" disabled ><script id="default-settings"></script><script src="../storage.js"></script><script src="../crates.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc fn"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../derive_utils/index.html'><div class='logo-container rust-logo'><img src='../rust-logo.png' alt='logo'></div></a><div class="sidebar-elems"><p class="location"><a href="index.html">derive_utils</a></p><div id="sidebar-vars" data-name="derive_trait" data-ty="fn" data-relpath=""></div><script defer src="sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class="fqn"><span class="in-band">Function <a href="index.html">derive_utils</a>::<wbr><a class="fn" href="">derive_trait</a><button id="copy-path" onclick="copy_path(this)">⎘</button></span><span class="out-of-band"><span id="render-detail"><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span><a class="srclink" href="../src/derive_utils/parse.rs.html#68-79" title="goto source code">[src]</a></span></h1><pre class="rust fn">pub fn derive_trait&lt;I&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;data: &amp;<a class="struct" href="struct.EnumData.html" title="struct derive_utils::EnumData">EnumData</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;trait_path: <a class="struct" href="../syn/path/struct.Path.html" title="struct syn::path::Path">Path</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;supertraits_types: I, <br>&nbsp;&nbsp;&nbsp;&nbsp;trait_def: <a class="struct" href="../syn/item/struct.ItemTrait.html" title="struct syn::item::ItemTrait">ItemTrait</a><br>) -&gt; <a class="struct" href="../proc_macro2/struct.TokenStream.html" title="struct proc_macro2::TokenStream">TokenStream</a> <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;I: <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/collect/trait.IntoIterator.html" title="trait core::iter::traits::collect::IntoIterator">IntoIterator</a>&lt;Item = <a class="struct" href="../proc_macro2/struct.Ident.html" title="struct proc_macro2::Ident">Ident</a>&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;I::<a class="type" href="https://doc.rust-lang.org/nightly/core/iter/traits/collect/trait.IntoIterator.html#associatedtype.IntoIter" title="type core::iter::traits::collect::IntoIterator::IntoIter">IntoIter</a>: <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/exact_size/trait.ExactSizeIterator.html" title="trait core::iter::traits::exact_size::ExactSizeIterator">ExactSizeIterator</a>,&nbsp;</span></pre><div class="docblock"><p>A function for creating <code>proc_macro_derive</code> like deriving trait to enum so
+long as all variants are implemented that trait.</p>
+<h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">derive_utils::derive_trait</span>;
+<span class="kw">use</span> <span class="ident">proc_macro::TokenStream</span>;
+<span class="kw">use</span> <span class="ident">quote::format_ident</span>;
+<span class="kw">use</span> <span class="ident">syn</span>::{<span class="ident">parse_macro_input</span>, <span class="ident">parse_quote</span>};
+
+<span class="attribute">#[<span class="ident">proc_macro_derive</span>(<span class="ident">Iterator</span>)]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">derive_iterator</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TokenStream</span> {
+    <span class="ident">derive_trait</span>(
+        <span class="kw-2">&amp;</span><span class="macro">parse_macro_input!</span>(<span class="ident">input</span>),
+        <span class="comment">// trait path</span>
+        <span class="macro">parse_quote!</span>(<span class="ident">std::iter::Iterator</span>),
+        <span class="comment">// super trait&#39;s associated types</span>
+        <span class="prelude-val">None</span>,
+        <span class="comment">// trait definition</span>
+        <span class="macro">parse_quote!</span> {
+            <span class="kw">trait</span> <span class="ident">Iterator</span> {
+                <span class="kw">type</span> <span class="ident">Item</span>;
+                <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Item</span><span class="op">&gt;</span>;
+                <span class="kw">fn</span> <span class="ident">size_hint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>);
+            }
+        },
+    )
+    .<span class="ident">into</span>()
+}
+
+<span class="attribute">#[<span class="ident">proc_macro_derive</span>(<span class="ident">ExactSizeIterator</span>)]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">derive_exact_size_iterator</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TokenStream</span> {
+    <span class="ident">derive_trait</span>(
+        <span class="kw-2">&amp;</span><span class="macro">parse_macro_input!</span>(<span class="ident">input</span>),
+        <span class="comment">// trait path</span>
+        <span class="macro">parse_quote!</span>(<span class="ident">std::iter::ExactSizeIterator</span>),
+        <span class="comment">// super trait&#39;s associated types</span>
+        <span class="prelude-val">Some</span>(<span class="macro">format_ident!</span>(<span class="string">&quot;Item&quot;</span>)),
+        <span class="comment">// trait definition</span>
+        <span class="macro">parse_quote!</span> {
+            <span class="kw">trait</span> <span class="ident">ExactSizeIterator</span>: <span class="ident">Iterator</span> {
+                <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span>;
+            }
+        },
+    )
+    .<span class="ident">into</span>()
+}</pre></div>
+</div></section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="derive_utils" data-search-index-js="../search-index.js" data-search-js="../search.js"></div>
+    <script src="../main.js"></script></body></html>

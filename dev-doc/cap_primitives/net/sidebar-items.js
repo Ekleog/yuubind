@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["NO_SOCKET_ADDRS",""]],"struct":[["Catalog","A representation of a set of network resources that may be accessed. This is presently a very incomplete concept."]]});

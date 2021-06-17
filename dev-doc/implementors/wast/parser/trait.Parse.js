@@ -1,0 +1,4 @@
+(function() {var implementors = {};
+implementors["wast"] = [];
+implementors["witx"] = [{"text":"impl <a class=\"trait\" href=\"wast/parser/trait.Parse.html\" title=\"trait wast::parser::Parse\">Parse</a>&lt;'_&gt; for <a class=\"enum\" href=\"witx/enum.BuiltinType.html\" title=\"enum witx::BuiltinType\">BuiltinType</a>","synthetic":false,"types":["witx::ast::BuiltinType"]},{"text":"impl&lt;'a&gt; <a class=\"trait\" href=\"wast/parser/trait.Parse.html\" title=\"trait wast::parser::Parse\">Parse</a>&lt;'a&gt; for <a class=\"enum\" href=\"witx/enum.DeclSyntax.html\" title=\"enum witx::DeclSyntax\">DeclSyntax</a>&lt;'a&gt;","synthetic":false,"types":["witx::parser::DeclSyntax"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

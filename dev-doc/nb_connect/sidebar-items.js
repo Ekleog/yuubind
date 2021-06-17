@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["tcp","Creates a pending TCP connection to the specified address."],["unix","Creates a pending Unix connection to the specified path."]]});

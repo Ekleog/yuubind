@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cap-std-0.13.7/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="https://raw.githubusercontent.com/bytecodealliance/cap-std/main/media/cap-std.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../cap_std/index.html'><div class='logo-container'><img src='https://raw.githubusercontent.com/bytecodealliance/cap-std/main/media/cap-std.svg' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1"> 1</span>
+<span id="2"> 2</span>
+<span id="3"> 3</span>
+<span id="4"> 4</span>
+<span id="5"> 5</span>
+<span id="6"> 6</span>
+<span id="7"> 7</span>
+<span id="8"> 8</span>
+<span id="9"> 9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+</pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! A capability-oriented API modeled after `std`.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! This corresponds to [`std`].</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Capability-oriented APIs represent access to external resources as</span>
+<span class="doccomment">//! objects which can be passed around between different parts of a</span>
+<span class="doccomment">//! program.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Two notable features are the [`Dir`] and [`Catalog`] types:</span>
+<span class="doccomment">//!  - `Dir` represents an open directory in a filesystem. Instead of</span>
+<span class="doccomment">//!    opening files by absolute paths or paths relative to the current</span>
+<span class="doccomment">//!    working directory, files are opened via paths relative to a</span>
+<span class="doccomment">//!    `Dir`. The concepts of a process-wide &quot;current working directory&quot;</span>
+<span class="doccomment">//!    and a single global filesystem namespace are de-emphasized.</span>
+<span class="doccomment">//!  - `Catalog` represents a set of network addresses. Instead of</span>
+<span class="doccomment">//!    allowing applications to request access to any address and then</span>
+<span class="doccomment">//!    applying process-wide filtering rules, filtering rules are</span>
+<span class="doccomment">//!    built into catalogs which may be passed through the program.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! On WASI, use of this library closely reflects the underlying system</span>
+<span class="doccomment">//! API, so it avoids compatibility layers.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! [`Dir`]: fs::Dir</span>
+<span class="doccomment">//! [`Catalog`]: net::Catalog</span>
+
+<span class="attribute">#![<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;wasi&quot;</span>, <span class="ident">feature</span>(<span class="ident">wasi_ext</span>))]</span>
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">can_vector</span>, <span class="ident">feature</span>(<span class="ident">can_vector</span>))]</span>
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">seek_convenience</span>, <span class="ident">feature</span>(<span class="ident">seek_convenience</span>))]</span>
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">with_options</span>, <span class="ident">feature</span>(<span class="ident">with_options</span>))]</span>
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">write_all_vectored</span>, <span class="ident">feature</span>(<span class="ident">write_all_vectored</span>))]</span>
+<span class="attribute">#![<span class="ident">doc</span>(
+    <span class="ident">html_logo_url</span> <span class="op">=</span> <span class="string">&quot;https://raw.githubusercontent.com/bytecodealliance/cap-std/main/media/cap-std.svg&quot;</span>
+)]</span>
+<span class="attribute">#![<span class="ident">doc</span>(
+    <span class="ident">html_favicon_url</span> <span class="op">=</span> <span class="string">&quot;https://raw.githubusercontent.com/bytecodealliance/cap-std/main/media/cap-std.ico&quot;</span>
+)]</span>
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">fs</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;fs_utf8&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">fs_utf8</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;wasi&quot;</span>))]</span> <span class="comment">// Disable `net` on WASI until it has networking support.</span>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">net</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">os</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">time</span>;
+<span class="comment">// For now, re-export `path`; see</span>
+<span class="comment">// &lt;https://github.com/bytecodealliance/cap-std/issues/88&gt;</span>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">std::path</span>;
+</pre></div>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="cap_std" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["clock",""],["dir",""],["fadvise",""],["fcntl",""],["file",""],["filetime","This module consists of helper types and functions for dealing with setting the file times (mainly in `path_filestat_set_times` syscall for now)."],["poll",""],["socket",""]]});

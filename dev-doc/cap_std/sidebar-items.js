@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["fs","A capability-oriented filesystem API modeled after `std::fs`."],["net","A capability-oriented network API modeled after `std::net`."],["os","OS-specific functionality."],["path","Cross-platform path manipulation."],["time","A capability-oriented clock API modeled after `std::time`."]]});

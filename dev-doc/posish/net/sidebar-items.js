@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["SocketType","`SOCK_*` constants."]],"fn":[["socket_type","`getsockopt(fd, SOL_SOCKET, SO_TYPE)`"]]});
